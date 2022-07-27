@@ -4,6 +4,8 @@ import HtmlWebpackPlugin from "html-webpack-plugin";
 import ForkTsCheckerWebpackPlugin from "fork-ts-checker-webpack-plugin";
 import ESLintPlugin from "eslint-webpack-plugin";
 import { CleanWebpackPlugin } from "clean-webpack-plugin";
+import postcssPresetEnv from "postcss-preset-env";
+import postcssImport from "postcss-import";
 
 const config: Configuration = {
   mode: "production",
@@ -28,6 +30,30 @@ const config: Configuration = {
             ],
           },
         },
+      },
+      {
+        test: /\.css$/,
+        use: [
+          "style-loader",
+          { loader: "css-loader", options: { importLoaders: 1, modules: true } },
+          {
+            loader: "postcss-loader",
+            options: {
+              postcssOptions: {
+                plugins: [
+                  postcssImport,
+                  postcssPresetEnv(
+                    {features: {
+                      "nesting-rules": true, 
+                      "custom-media-queries": true, 
+                      "color-mod-function": true}}
+                      )],
+              },
+            },
+          },
+      
+        ],
+        
       },
     ],
   },

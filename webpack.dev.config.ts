@@ -1,9 +1,13 @@
 import path from "path";
-import { Configuration as WebpackConfiguration, HotModuleReplacementPlugin } from "webpack";
-import { Configuration as WebpackDevServerConfiguration } from 'webpack-dev-server';
+import {
+  Configuration as WebpackConfiguration,
+  HotModuleReplacementPlugin,
+} from "webpack";
+import { Configuration as WebpackDevServerConfiguration } from "webpack-dev-server";
 import HtmlWebpackPlugin from "html-webpack-plugin";
-import ForkTsCheckerWebpackPlugin from 'fork-ts-checker-webpack-plugin';
+import ForkTsCheckerWebpackPlugin from "fork-ts-checker-webpack-plugin";
 import ESLintPlugin from "eslint-webpack-plugin";
+import postcssConfig from './postcss.config'
 
 
 interface Configuration extends WebpackConfiguration {
@@ -32,6 +36,14 @@ const config: Configuration = {
           },
         },
       },
+      {
+        test: /\.css$/i,
+        use: [
+          { loader: "style-loader" },
+          { loader: "css-loader", options: { sourceMap: true } },
+          { loader: "postcss-loader", options: { postcssOptions: {postcssConfig} }},
+        ],
+      },
     ],
   },
   resolve: {
@@ -43,20 +55,20 @@ const config: Configuration = {
     }),
     new HotModuleReplacementPlugin(),
     new ForkTsCheckerWebpackPlugin({
-      async: false
+      async: false,
     }),
     new ESLintPlugin({
       extensions: ["js", "jsx", "ts", "tsx"],
     }),
   ],
-  
+
   devtool: "inline-source-map",
   devServer: {
     static: path.join(__dirname, "build"),
     historyApiFallback: true,
     port: 4000,
     open: true,
-    hot: true
+    hot: true,
   },
 };
 
